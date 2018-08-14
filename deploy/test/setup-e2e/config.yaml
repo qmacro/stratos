@@ -18,6 +18,9 @@ fixture:
     password: changeme
   organization: e2e
   space: e2e
+  # Org and space, where the private and space-scoped service instances are not avialable
+  no-access-org: e2e-test
+  no-access-space: e2e-test
   services:
     public-service: public-service
     private-service: private-service

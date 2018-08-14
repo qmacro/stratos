@@ -47,7 +47,16 @@ func (e2e *SetupE2EHelper) TearDownEndpointForFixture(endpoint Endpoint, fixture
 
 func (e2e *SetupE2EHelper) deleteOrg(cfClient *cfclient.Client, fixture FixtureConfig) error {
 
-	orgEntity, err := cfClient.GetOrgByName(fixture.Organization)
+	err := e2e.deleteOrgByName(cfClient, fixture.Organization)
+	if err != nil {
+		return fmt.Errorf("Failed to get Org due to to %s", err)
+	}
+	err = e2e.deleteOrgByName(cfClient, fixture.NoAccessOrganization)
+	return err
+}
+func (e2e *SetupE2EHelper) deleteOrgByName(cfClient *cfclient.Client, name string) error {
+
+	orgEntity, err := cfClient.GetOrgByName(name)
 	if err != nil {
 		fmt.Printf("Failed to get Org due to to %s, continuing", err)
 		return nil

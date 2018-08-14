@@ -23,10 +23,12 @@ type UAAConfig struct {
 }
 
 type FixtureConfig struct {
-	NonAdminUser User          `json:"non-admin-user" form:"nonAdminUser" yaml:"non-admin-user"`
-	Organization string        `json:"organization" form:"organization" yaml:"organization"`
-	Space        string        `json:"space" form:"space" yaml:"space"`
-	Services     ServiceConfig `json:"services" form:"services" yaml:"services"`
+	NonAdminUser         User          `json:"non-admin-user" form:"nonAdminUser" yaml:"non-admin-user"`
+	Organization         string        `json:"organization" form:"organization" yaml:"organization"`
+	Space                string        `json:"space" form:"space" yaml:"space"`
+	NoAccessOrganization string        `json:"no-access-org" form:"no-access-org" yaml:"no-access-org"`
+	NoAccessSpace        string        `json:"no-access-space" form:"no-access-space" yaml:"no-access-space"`
+	Services             ServiceConfig `json:"services" form:"services" yaml:"services"`
 }
 
 type User struct {

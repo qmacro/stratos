@@ -57,6 +57,11 @@ func (e2e *SetupE2EHelper) SetupEndpointForFixture(endpoint Endpoint, fixture Fi
 	if err != nil {
 		return fmt.Errorf("Failed to create org due to %+v", err)
 	}
+	log.Infof("Creating Org %s", fixture.NoAccessOrganization)
+	noAccessOrg, err := e2e.CreateOrg(cfAPI, fixture.NoAccessOrganization)
+	if err != nil {
+		return fmt.Errorf("Failed to create org due to %+v", err)
+	}
 
 	log.Debugf("Created org with ID: %s\n", org.Guid)
 
@@ -66,8 +71,17 @@ func (e2e *SetupE2EHelper) SetupEndpointForFixture(endpoint Endpoint, fixture Fi
 		return fmt.Errorf("Failed to associate role due to %s", err)
 	}
 
+	err = e2e.AssociateOrgUser(cfAPI, noAccessOrg.Guid, userEntity.Guid)
+	if err != nil {
+		return fmt.Errorf("Failed to associate role due to %s", err)
+	}
+
 	log.Infof("Creating Space %s\n", fixture.Space)
 	spaceEntity, err := e2e.CreateSpace(cfAPI, fixture.Space, org.Guid, userEntity.Guid)
+	if err != nil {
+		return fmt.Errorf("Failed to create space due to %s\n", err)
+	}
+	_, err := e2e.CreateSpace(cfAPI, fixture.NoAccessSpace, noAccessOrg.Guid, userEntity.Guid)
 	if err != nil {
 		return fmt.Errorf("Failed to create space due to %s\n", err)
 	}
