@@ -9,8 +9,8 @@ import (
 	"github.com/cloudfoundry-incubator/stratos/src/jetstream/repository/interfaces"
 )
 
-func (p *portalProxy) doHttpBasicFlowRequest(cnsiRequest *interfaces.CNSIRequest, req *http.Request) (*http.Response, error) {
-	log.Debug("doHttpBasicFlowRequest")
+func (p *portalProxy) doHTTPBasicFlowRequest(cnsiRequest *interfaces.CNSIRequest, req *http.Request) (*http.Response, error) {
+	log.Debug("doHTTPBasicFlowRequest")
 
 	// get a cnsi token record and a cnsi record
 	tokenRec, cnsi, err := p.getCNSIRequestRecords(cnsiRequest)

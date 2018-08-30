@@ -48,15 +48,15 @@ func (p *portalProxy) RegisterEndpoint(c echo.Context, fetchInfo interfaces.Info
 		skipSSLValidation = false
 	}
 
-	cnsiClientId := c.FormValue("cnsi_client_id")
+	cnsiClientID := c.FormValue("cnsi_client_id")
 	cnsiClientSecret := c.FormValue("cnsi_client_secret")
 
-	if cnsiClientId == "" {
-		cnsiClientId = p.GetConfig().CFClient
+	if cnsiClientID == "" {
+		cnsiClientID = p.GetConfig().CFClient
 		cnsiClientSecret = p.GetConfig().CFClientSecret
 	}
 
-	newCNSI, err := p.DoRegisterEndpoint(cnsiName, apiEndpoint, skipSSLValidation, cnsiClientId, cnsiClientSecret, fetchInfo)
+	newCNSI, err := p.DoRegisterEndpoint(cnsiName, apiEndpoint, skipSSLValidation, cnsiClientID, cnsiClientSecret, fetchInfo)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (p *portalProxy) RegisterEndpoint(c echo.Context, fetchInfo interfaces.Info
 	return nil
 }
 
-func (p *portalProxy) DoRegisterEndpoint(cnsiName string, apiEndpoint string, skipSSLValidation bool, clientId string, clientSecret string, fetchInfo interfaces.InfoFunc) (interfaces.CNSIRecord, error) {
+func (p *portalProxy) DoRegisterEndpoint(cnsiName string, apiEndpoint string, skipSSLValidation bool, clientID string, clientSecret string, fetchInfo interfaces.InfoFunc) (interfaces.CNSIRecord, error) {
 
 	if len(cnsiName) == 0 || len(apiEndpoint) == 0 {
 		return interfaces.CNSIRecord{}, interfaces.NewHTTPShadowError(
@@ -119,7 +119,7 @@ func (p *portalProxy) DoRegisterEndpoint(cnsiName string, apiEndpoint string, sk
 	newCNSI.Name = cnsiName
 	newCNSI.APIEndpoint = apiEndpointURL
 	newCNSI.SkipSSLValidation = skipSSLValidation
-	newCNSI.ClientId = clientId
+	newCNSI.ClientId = clientID
 	newCNSI.ClientSecret = clientSecret
 
 	err = p.setCNSIRecord(guid, newCNSI)

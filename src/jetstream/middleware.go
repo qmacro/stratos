@@ -20,6 +20,7 @@ import (
 
 const cfSessionCookieName = "JSESSIONID"
 
+// StratosDomainHeader is the HTTP header used to communicate the configured cookie domain
 const StratosDomainHeader = "x-stratos-domain"
 
 func handleSessionError(config interfaces.PortalConfig, c echo.Context, err error, doNotLog bool) error {

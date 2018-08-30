@@ -20,8 +20,8 @@ type portalProxy struct {
 	EmptyCookieMatcher     *regexp.Regexp // Used to detect and remove empty Cookies sent by certain browsers
 }
 
-// HttpSessionStore - Interface for a store that can manage HTTP Sessions
-type HttpSessionStore interface {
+// HTTPSessionStore - Interface for a store that can manage HTTP Sessions
+type HTTPSessionStore interface {
 	sessions.Store
 	Close()
 	StopCleanup(quit chan<- struct{}, done <-chan struct{})

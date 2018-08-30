@@ -155,18 +155,18 @@ func expectOneRow() sqlmock.Rows {
 
 func expectCFRow() sqlmock.Rows {
 	return sqlmock.NewRows(rowFieldsForCNSI).
-		AddRow(mockCFGUID, "Some fancy CF Cluster", "cf", mockAPIEndpoint, mockAuthEndpoint, mockAuthEndpoint, mockDopplerEndpoint, true, mockClientId, cipherClientSecret)
+		AddRow(mockCFGUID, "Some fancy CF Cluster", "cf", mockAPIEndpoint, mockAuthEndpoint, mockAuthEndpoint, mockDopplerEndpoint, true, mockClientID, cipherClientSecret)
 }
 
 func expectCERow() sqlmock.Rows {
 	return sqlmock.NewRows(rowFieldsForCNSI).
-		AddRow(mockCEGUID, "Some fancy HCE Cluster", "hce", mockAPIEndpoint, mockAuthEndpoint, mockAuthEndpoint, "", true, mockClientId, cipherClientSecret)
+		AddRow(mockCEGUID, "Some fancy HCE Cluster", "hce", mockAPIEndpoint, mockAuthEndpoint, mockAuthEndpoint, "", true, mockClientID, cipherClientSecret)
 }
 
 func expectCFAndCERows() sqlmock.Rows {
 	return sqlmock.NewRows(rowFieldsForCNSI).
-		AddRow(mockCFGUID, "Some fancy CF Cluster", "cf", mockAPIEndpoint, mockAuthEndpoint, mockAuthEndpoint, mockDopplerEndpoint, true, mockClientId, cipherClientSecret).
-		AddRow(mockCEGUID, "Some fancy HCE Cluster", "hce", mockAPIEndpoint, mockAuthEndpoint, mockAuthEndpoint, "", true, mockClientId, cipherClientSecret)
+		AddRow(mockCFGUID, "Some fancy CF Cluster", "cf", mockAPIEndpoint, mockAuthEndpoint, mockAuthEndpoint, mockDopplerEndpoint, true, mockClientID, cipherClientSecret).
+		AddRow(mockCEGUID, "Some fancy HCE Cluster", "hce", mockAPIEndpoint, mockAuthEndpoint, mockAuthEndpoint, "", true, mockClientID, cipherClientSecret)
 }
 
 func expectTokenRow() sqlmock.Rows {
@@ -261,7 +261,7 @@ const (
 	mockAuthEndpoint    = "https://login.127.0.0.1"
 	mockTokenEndpoint   = "https://uaa.127.0.0.1"
 	mockDopplerEndpoint = "https://doppler.127.0.0.1"
-	mockClientId        = "stratos_clientid"
+	mockClientID        = "stratos_clientid"
 	mockClientSecret    = "big_secret"
 	mockProxyVersion    = 20161117141922
 

@@ -60,7 +60,7 @@ var (
 	httpClientMutatingSkipSSL = http.Client{}
 )
 
-func cleanup(dbc *sql.DB, ss HttpSessionStore) {
+func cleanup(dbc *sql.DB, ss HTTPSessionStore) {
 	// Print a newline - if you pressed CTRL+C, the alighment will be slightly out, so start a new line first
 	fmt.Println()
 	log.Info("Attempting to shut down gracefully...")
@@ -321,7 +321,7 @@ func initConnPool(dc datastore.DatabaseConfig) (*sql.DB, error) {
 	return pool, nil
 }
 
-func initSessionStore(db *sql.DB, databaseProvider string, pc interfaces.PortalConfig, sessionExpiry int) (HttpSessionStore, *sessions.Options, error) {
+func initSessionStore(db *sql.DB, databaseProvider string, pc interfaces.PortalConfig, sessionExpiry int) (HTTPSessionStore, *sessions.Options, error) {
 	log.Debug("initSessionStore")
 
 	sessionsTable := "sessions"
@@ -459,7 +459,7 @@ func detectTLSCert(pc interfaces.PortalConfig) (string, string, error) {
 	return certFilename, certKeyFilename, nil
 }
 
-func newPortalProxy(pc interfaces.PortalConfig, dcp *sql.DB, ss HttpSessionStore, sessionStoreOptions *sessions.Options) *portalProxy {
+func newPortalProxy(pc interfaces.PortalConfig, dcp *sql.DB, ss HTTPSessionStore, sessionStoreOptions *sessions.Options) *portalProxy {
 	log.Debug("newPortalProxy")
 
 	// Generate cookie name - avoids issues if the cookie domain is changed

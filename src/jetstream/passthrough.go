@@ -22,11 +22,13 @@ import (
 // API Host Prefix to replace if the custom header is supplied
 const apiPrefix = "api."
 
+// PassthroughErrorStatus is the error status for a pass-through request
 type PassthroughErrorStatus struct {
 	StatusCode int    `json:"statusCode"`
 	Status     string `json:"status"`
 }
 
+// PassthroughError is the error for a pass-through request
 type PassthroughError struct {
 	Error         *PassthroughErrorStatus `json:"error"`
 	ErrorResponse *json.RawMessage        `json:"errorResponse"`
@@ -234,7 +236,7 @@ func (p *portalProxy) ProxyRequest(c echo.Context, uri *url.URL) (map[string]*in
 
 	if shouldPassthrough {
 		if len(cnsiList) > 1 {
-			err := errors.New("Requested passthrough to multiple CNSIs. Only single CNSI passthroughs are supported.")
+			err := errors.New("Requested passthrough to multiple CNSIs. Only single CNSI passthroughs are supported")
 			return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 	}
@@ -369,7 +371,7 @@ func (p *portalProxy) doRequest(cnsiRequest *interfaces.CNSIRequest, done chan<-
 	// Mkae the request using the appropriate auth helper
 	switch tokenRec.AuthType {
 	case interfaces.AuthTypeHttpBasic:
-		res, err = p.doHttpBasicFlowRequest(cnsiRequest, req)
+		res, err = p.doHTTPBasicFlowRequest(cnsiRequest, req)
 	case interfaces.AuthTypeOIDC:
 		res, err = p.doOidcFlowRequest(cnsiRequest, req)
 	default:
