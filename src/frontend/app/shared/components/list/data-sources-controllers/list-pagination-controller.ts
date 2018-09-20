@@ -166,7 +166,7 @@ export class ListPaginationController<T> implements IListPaginationController<T>
         ));
       }
 
-      if (paginationEntityState.maxResults) {
+      if (paginationEntityState.maxResults || paginationEntityState.maxResults === 0) {
         this.dataSource.setMultiFilter(changes, paginationEntityState.params);
       }
 

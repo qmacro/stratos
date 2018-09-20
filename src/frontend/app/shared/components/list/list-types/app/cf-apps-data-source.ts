@@ -155,7 +155,7 @@ export class CfAppsDataSource extends ListDataSource<APIResource> {
       this.store.dispatch(new ResetPagination(this.entityKey, this.paginationKey));
     } else {
       params.q = qChanges;
-      this.store.dispatch(new SetParams(this.entityKey, this.paginationKey, params, false, true));
+      this.store.dispatch(new SetParams(this.entityKey, this.paginationKey, params, true, true));
     }
   }
 

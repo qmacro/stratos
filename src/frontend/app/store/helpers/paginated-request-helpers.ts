@@ -129,12 +129,16 @@ export function flattenPagination<T, C>(
     mergeMap(firstResData => {
       const allResults = flattener.getTotalResults(firstResData);
       if (maxCount) {
-        // If maxCount is defined, store the total results we have for the request
-        store.dispatch(new PaginationMaxResults(allResults, entityKey, paginationKey));
+
         // If we have too many results only return basic first page information
         if (allResults > maxCount) {
+          store.dispatch(new PaginationMaxResults(-1, entityKey, paginationKey));
           return forkJoin([flattener.clearResults(firstResData)]);
+        } else {
+          // If maxCount is defined, store the total results we have for the request//TODO: RC
+          store.dispatch(new PaginationMaxResults(allResults, entityKey, paginationKey)); // TODO: RC change name to last request value
         }
+
       }
       // Discover the endpoint with the most pages. This is the amount of request we will need to make to fetch all pages from all
       // Make those requests

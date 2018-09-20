@@ -8,7 +8,9 @@ export function paginationMaxReached(state: PaginationState, action): Pagination
     return state;
   }
 
-  if (state[maxAction.entityKey][maxAction.paginationKey].maxResults === maxAction.maxReached) {
+  if (
+    // state[maxAction.entityKey][maxAction.paginationKey].maxResults ||
+    state[maxAction.entityKey][maxAction.paginationKey].maxResults === maxAction.maxReached) {
     return state;
   }
 

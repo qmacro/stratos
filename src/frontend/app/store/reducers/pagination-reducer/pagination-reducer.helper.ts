@@ -119,6 +119,7 @@ export const getPaginationObservables = <T = any>(
 
 function hasPaginationParamsChanged(o: PaginationParam, n: PaginationParam): boolean {
   try {
+    console.log(JSON.stringify(o), JSON.stringify(n));
     return JSON.stringify(o) !== JSON.stringify(n);
   } catch { }
   return false;
@@ -129,11 +130,27 @@ function shouldFetchMaxedList(pagination: PaginationEntityState, previousPaginat
   if (pagination.maxResults === null || pagination.maxResults === undefined) {
     return;
   }
-  const maxedResults = pagination.maxResults || 0;
+
+  if (!hasPaginationParamsChanged(previousPaginationParams, pagination.params) || isFetchingPage(pagination)) {
+    return;
+  }
+  if (pagination.maxResults === -1) {
+    // result set we have is not valid, always refech.... add params changed
+    return true;
+  }
+  // const maxedResults = 10; // pagination.maxResults || 0;
+  const haveAllResultsCount = pagination.maxResults || 0;
+  const entitiesCount = pagination.ids[1].length; // .totalResults || 0;
   const totalResults = pagination.totalResults || 0;
-  return maxedResults !== totalResults &&
-    !isFetchingPage(pagination) &&
-    hasPaginationParamsChanged(previousPaginationParams, pagination.params);
+
+  // const a = maxedResults === totalResults;
+  // const b = 10 < totalResults;
+
+  // return !isFetchingPage(pagination) &&
+  //   hasPaginationParamsChanged(previousPaginationParams, pagination.params) &&
+  //   (a || b);
+
+  return haveAllResultsCount === entitiesCount || totalResults === 0;
 }
 
 function shouldFetchLocalList(hasDispatchedOnce, pagination: PaginationEntityState, previousPaginationParams: PaginationParam): boolean {
@@ -142,7 +159,7 @@ function shouldFetchLocalList(hasDispatchedOnce, pagination: PaginationEntitySta
     return false;
   }
 
-  const shouldFetchLocal = !hasDispatchedOnce && !hasValidOrGettingPage(pagination);
+  const shouldFetchLocal = !hasDispatchedOnce || !hasValidOrGettingPage(pagination);
   if (shouldFetchLocal) {
     return true;
   }
@@ -173,6 +190,7 @@ function getObservables<T = any>(
   // Keep this separate, we don't want tap executing every time someone subscribes
   const fetchPagination$ = paginationSelect$.pipe(
     tap(pagination => {
+      console.log(pagination.params);
       // This could be written more succinctly, however clearer in this more verbose form
       if (
         (!pagination && !hasDispatchedOnce) ||
@@ -288,6 +306,9 @@ export function spreadClientPagination(pag: PaginationClientPagination): Paginat
 export function spreadPaginationParams(params: PaginationParam): PaginationParam {
   return {
     ...params,
-    q: [...params.q]
+    q: params.q ? params.q.reduce((newQ, qP) => {
+      newQ.push({ ...qP });
+      return newQ;
+    }, []) : null
   };
 }
