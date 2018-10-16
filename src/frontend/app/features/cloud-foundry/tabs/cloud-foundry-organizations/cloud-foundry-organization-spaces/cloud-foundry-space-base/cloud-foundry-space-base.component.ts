@@ -18,11 +18,10 @@ import { CloudFoundryEndpointService } from '../../../../services/cloud-foundry-
 import { CloudFoundryOrganizationService } from '../../../../services/cloud-foundry-organization.service';
 import { CloudFoundrySpaceService } from '../../../../services/cloud-foundry-space.service';
 import {
-  getTabsFromExtensions,
   StratosTabType,
   StratosActionMetadata,
-  getActionsFromExtensions,
-  StratosActionType
+  StratosActionType,
+  ExtensionService
 } from '../../../../../../core/extension/extension-service';
 
 @Component({
@@ -77,7 +76,7 @@ export class CloudFoundrySpaceBaseComponent implements OnDestroy {
   public schema = entityFactory(spaceSchemaKey);
   deleteRedirectSub: any;
 
-  public extensionActions: StratosActionMetadata[] = getActionsFromExtensions(StratosActionType.CloudFoundryOrg);
+  public extensionActions: StratosActionMetadata[] = this.extensionService.getActionsFromExtensions(StratosActionType.CloudFoundryOrg);
 
   constructor(
     public cfEndpointService: CloudFoundryEndpointService,
@@ -85,7 +84,8 @@ export class CloudFoundrySpaceBaseComponent implements OnDestroy {
     public cfOrgService: CloudFoundryOrganizationService,
     private store: Store<AppState>,
     currentUserPermissionsService: CurrentUserPermissionsService,
-    private confirmDialog: ConfirmationDialogService
+    private confirmDialog: ConfirmationDialogService,
+    private extensionService: ExtensionService
   ) {
     this.isFetching$ = cfSpaceService.space$.pipe(
       map(space => space.entityRequestInfo.fetching)
@@ -118,7 +118,7 @@ export class CloudFoundrySpaceBaseComponent implements OnDestroy {
     ).subscribe();
 
     // Add any tabs from extensions
-    this.tabLinks = this.tabLinks.concat(getTabsFromExtensions(StratosTabType.CloudFoundrySpace));
+    this.tabLinks = this.tabLinks.concat(extensionService.getTabsFromExtensions(StratosTabType.CloudFoundrySpace));
   }
 
   private setUpBreadcrumbs(

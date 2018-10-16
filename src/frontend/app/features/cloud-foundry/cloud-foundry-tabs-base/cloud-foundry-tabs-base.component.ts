@@ -1,3 +1,4 @@
+import { ExtensionService } from './../../../core/extension/extension-service';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, of as observableOf } from 'rxjs';
@@ -13,9 +14,7 @@ import { AppState } from './../../../store/app-state';
 import { EndpointsService } from '../../../core/endpoints.service';
 import {
   StratosTabType,
-  getTabsFromExtensions,
   StratosActionMetadata,
-  getActionsFromExtensions,
   StratosActionType
 } from '../../../core/extension/extension-service';
 @Component({
@@ -38,11 +37,12 @@ export class CloudFoundryTabsBaseComponent implements OnInit {
   public canAddOrg$: Observable<boolean>;
   public canUpdateRoles$: Observable<boolean>;
 
-  public extensionActions: StratosActionMetadata[] = getActionsFromExtensions(StratosActionType.CloudFoundry);
+  public extensionActions: StratosActionMetadata[] = this.extensionService.getActionsFromExtensions(StratosActionType.CloudFoundry);
 
   constructor(
     public cfEndpointService: CloudFoundryEndpointService,
     private currentUserPermissionsService: CurrentUserPermissionsService,
+    private extensionService: ExtensionService,
     endpointsService: EndpointsService
   ) {
     const firehoseHidden$ = this.currentUserPermissionsService
@@ -81,7 +81,7 @@ export class CloudFoundryTabsBaseComponent implements OnInit {
       { link: 'build-packs', label: 'Build Packs' },
       { link: 'stacks', label: 'Stacks' },
       { link: 'security-groups', label: 'Security Groups' }
-    ].concat(getTabsFromExtensions(StratosTabType.CloudFoundry));
+    ].concat(extensionService.getTabsFromExtensions(StratosTabType.CloudFoundry));
   }
 
   ngOnInit() {

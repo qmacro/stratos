@@ -26,11 +26,10 @@ import { RestageApplication } from '../../../../store/actions/application.action
 import { ApplicationStateData } from '../../../../shared/components/application-state/application-state.service';
 import { ActionState } from '../../../../store/reducers/api-request-reducer/types';
 import {
-  getTabsFromExtensions,
   StratosTabType,
   StratosActionMetadata,
-  getActionsFromExtensions,
-  StratosActionType
+  StratosActionType,
+  ExtensionService
 } from '../../../../core/extension/extension-service';
 
 // Confirmation dialogs
@@ -61,7 +60,7 @@ export class ApplicationTabsBaseComponent implements OnInit, OnDestroy {
   public appState$: Observable<ApplicationStateData>;
   isBusyUpdating$: Observable<{ updating: boolean }>;
 
-  public extensionActions: StratosActionMetadata[] = getActionsFromExtensions(StratosActionType.Application);
+  public extensionActions: StratosActionMetadata[] = this.extensionService.getActionsFromExtensions(StratosActionType.Application);
 
   constructor(
     private route: ActivatedRoute,
@@ -71,7 +70,8 @@ export class ApplicationTabsBaseComponent implements OnInit, OnDestroy {
     private store: Store<AppState>,
     private confirmDialog: ConfirmationDialogService,
     private endpointsService: EndpointsService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private extensionService: ExtensionService
   ) {
     const endpoints$ = store.select(endpointEntitiesSelector);
     this.breadcrumbs$ = applicationService.waitForAppEntity$.pipe(
@@ -111,7 +111,7 @@ export class ApplicationTabsBaseComponent implements OnInit, OnDestroy {
     });
 
     // Add any tabs from extensions
-    this.tabLinks = this.tabLinks.concat(getTabsFromExtensions(StratosTabType.Application));
+    this.tabLinks = this.tabLinks.concat(this.extensionService.getTabsFromExtensions(StratosTabType.Application));
   }
   public breadcrumbs$: Observable<IHeaderBreadcrumb[]>;
   isFetching$: Observable<boolean>;

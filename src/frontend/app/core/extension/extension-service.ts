@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Route, Router } from '@angular/router';
+import { InjectorModule } from '../../injector.module';
+import { Component } from '@angular/core';
 
 export const extensionsActionRouteKey = 'extensionsActionsKey';
 
@@ -47,21 +49,13 @@ export interface StratosActionMetadata {
 
 export type StratosRouteType = StratosTabType | StratosActionType;
 
-// Stores the extension metadata as defined by the decorators
-const extensionMetadata = {
-  routes: [],
-  loginComponent: null,
-  extensionRoutes: {},
-  tabs: {},
-  actions: {},
-};
-
 /**
  * Decortator for a Tab extension
  */
 export function StratosTab(props: StratosTabMetadata) {
+  const extensionsService = InjectorModule.injector.get(ExtensionService);
   return function (target) {
-    addExtensionTab(props.type, target, props);
+    extensionsService.addExtensionTab(props.type, target, props);
   };
 }
 
@@ -69,8 +63,9 @@ export function StratosTab(props: StratosTabMetadata) {
  * Decortator for an Action extension
  */
 export function StratosAction(props: StratosActionMetadata) {
+  const extensionsService = InjectorModule.injector.get(ExtensionService);
   return function (target) {
-    addExtensionAction(props.type, target, props);
+    extensionsService.addExtensionAction(props.type, target, props);
   };
 }
 
@@ -79,51 +74,34 @@ export function StratosAction(props: StratosActionMetadata) {
  */
 
 export function StratosExtension(config: StratosExtensionConfig) {
-  return (_target) => {
+  const extensionsService = InjectorModule.injector.get(ExtensionService);
+  return (target /** This needs to be here even if we don't use it */) => {
     if (config.routes) {
-      extensionMetadata.routes.push(config.routes);
+      extensionsService.addExtensionRoutes(config.routes);
     }
   };
 }
 
 export function StratosLoginComponent() {
+  const extensionsService = InjectorModule.injector.get(ExtensionService);
   return (target) => {
-    extensionMetadata.loginComponent = target;
+    extensionsService.setLoginComponent(target);
   };
 }
 
-function addExtensionTab(tab: StratosTabType, target: any, props: any) {
-  if (!extensionMetadata.tabs[tab]) {
-    extensionMetadata.tabs[tab] = [];
-  }
-  if (!extensionMetadata.extensionRoutes[tab]) {
-    extensionMetadata.extensionRoutes[tab] = [];
-  }
 
-  extensionMetadata.extensionRoutes[tab].push({
-    path: props.link,
-    component: target
-  });
-  extensionMetadata.tabs[tab].push(props);
-}
-
-function addExtensionAction(action: StratosActionType, target: any, props: any) {
-  if (!extensionMetadata.actions[action]) {
-    extensionMetadata.actions[action] = [];
-    extensionMetadata.extensionRoutes[action] = [];
-  }
-  extensionMetadata.extensionRoutes[action].push({
-    path: props.link,
-    component: target
-  });
-  extensionMetadata.actions[action].push(props);
-}
 
 // Injectable Extension Service
 @Injectable()
 export class ExtensionService {
 
-  public metadata = extensionMetadata;
+  public metadata = {
+    routes: [],
+    loginComponent: null,
+    extensionRoutes: {},
+    tabs: {},
+    actions: {},
+  };
 
   constructor(private router: Router) { }
 
@@ -134,6 +112,14 @@ export class ExtensionService {
     this.applyRoutesFromExtensions(this.router);
   }
 
+  public setLoginComponent(component: Component) {
+    this.metadata.loginComponent = component;
+  }
+
+  public addExtensionRoutes(routes: Route[]) {
+    this.metadata.routes.push(routes);
+  }
+
   /**
    * Apply route configuration
    */
@@ -142,14 +128,14 @@ export class ExtensionService {
     const dashboardRoute = routeConfig.find(r => r.path === '' && !!r.component && r.component.name === 'DashboardBaseComponent');
     let needsReset = false;
     if (dashboardRoute) {
-      extensionMetadata.routes.forEach(routes => dashboardRoute.children = dashboardRoute.children.concat(routes));
+      this.metadata.routes.forEach(routes => dashboardRoute.children = dashboardRoute.children.concat(routes));
       needsReset = true;
     }
 
-    if (extensionMetadata.loginComponent) {
+    if (this.metadata.loginComponent) {
       // Override the component used for the login route
       const loginRoute = routeConfig.find(r => r.path === 'login') || {};
-      loginRoute.component = extensionMetadata.loginComponent;
+      loginRoute.component = this.metadata.loginComponent;
       needsReset = true;
     }
 
@@ -157,18 +143,44 @@ export class ExtensionService {
       router.resetConfig(routeConfig);
     }
   }
+
+  public addExtensionTab(tab: StratosTabType, target: any, props: any) {
+    if (!this.metadata.tabs[tab]) {
+      this.metadata.tabs[tab] = [];
+    }
+    if (!this.metadata.extensionRoutes[tab]) {
+      this.metadata.extensionRoutes[tab] = [];
+    }
+
+    this.metadata.extensionRoutes[tab].push({
+      path: props.link,
+      component: target
+    });
+    this.metadata.tabs[tab].push(props);
+  }
+
+  public addExtensionAction(action: StratosActionType, target: any, props: any) {
+    if (!this.metadata.actions[action]) {
+      this.metadata.actions[action] = [];
+      this.metadata.extensionRoutes[action] = [];
+    }
+    this.metadata.extensionRoutes[action].push({
+      path: props.link,
+      component: target
+    });
+    this.metadata.actions[action].push(props);
+  }
+
+  public getRoutesFromExtensions(routeType: StratosRouteType) {
+    return this.metadata.extensionRoutes[routeType] || [];
+  }
+
+  public getTabsFromExtensions(tabType: StratosTabType) {
+    return this.metadata.tabs[tabType] || [];
+  }
+
+  public getActionsFromExtensions(actionType: StratosActionType): StratosActionMetadata[] {
+    return this.metadata.actions[actionType] || [];
+  }
 }
 
-// Helpers to access Extension metadata (without using the injectable Extension Service)
-
-export function getRoutesFromExtensions(routeType: StratosRouteType) {
-  return extensionMetadata.extensionRoutes[routeType] || [];
-}
-
-export function getTabsFromExtensions(tabType: StratosTabType) {
-  return extensionMetadata.tabs[tabType] || [];
-}
-
-export function getActionsFromExtensions(actionType: StratosActionType): StratosActionMetadata[] {
-  return extensionMetadata.actions[actionType] || [];
-}

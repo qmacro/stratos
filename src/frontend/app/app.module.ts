@@ -22,6 +22,7 @@ import { XSRFModule } from './xsrf.module';
 import { GITHUB_API_URL, getGitHubAPIURL } from './core/github.helpers';
 import { ExtensionService } from './core/extension/extension-service';
 import { DynamicExtenstionRoutes } from './core/extension/dynamic-extension-routes';
+import { InjectorModule } from './injector.module';
 
 // Create action for router navigation. See
 // - https://github.com/ngrx/platform/issues/68
@@ -62,6 +63,7 @@ export class CustomRouterStateSerializer
     NoEndpointsNonAdminComponent,
   ],
   imports: [
+    InjectorModule,
     BrowserModule,
     BrowserAnimationsModule,
     CoreModule,
@@ -81,7 +83,6 @@ export class CustomRouterStateSerializer
   ],
   providers: [
     LoggedInService,
-    ExtensionService,
     DynamicExtenstionRoutes,
     { provide: GITHUB_API_URL, useFactory: getGitHubAPIURL },
     { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer } // Create action for router navigation

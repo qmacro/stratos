@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, RouterStateSnapshot, ActivatedRouteSnapshot, Route } from '@angular/router';
 import { Observable } from 'rxjs';
-import { getRoutesFromExtensions, StratosRouteType } from './extension-service';
+import { StratosRouteType, ExtensionService } from './extension-service';
 
 /**
  * This is used to dynamically add an extension's routes - since we can't do this
@@ -19,12 +19,12 @@ import { getRoutesFromExtensions, StratosRouteType } from './extension-service';
 
 @Injectable()
 export class DynamicExtenstionRoutes implements CanActivate {
-  constructor(private router: Router) {}
+  constructor(private router: Router, private extensionService: ExtensionService) { }
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Observable<boolean>|Promise<boolean>|boolean {
+  ): Observable<boolean> | Promise<boolean> | boolean {
     const childRoutes = this.getChildRoutes(route.parent.routeConfig);
     // Remove the last route (which is us, the '**' route)
     let newChildRoutes = childRoutes.splice(0, childRoutes.length - 1);
@@ -35,7 +35,7 @@ export class DynamicExtenstionRoutes implements CanActivate {
       const tabGroup = route.routeConfig.data.stratosRouteGroup;
 
       // Add the missing routes
-      const newRoutes = getRoutesFromExtensions(tabGroup as StratosRouteType);
+      const newRoutes = this.extensionService.getRoutesFromExtensions(tabGroup as StratosRouteType);
       newChildRoutes = newChildRoutes.concat(newRoutes);
     }
 

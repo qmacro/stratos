@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { StratosActionMetadata, getActionsFromExtensions, StratosActionType } from '../../../core/extension/extension-service';
+import { StratosActionMetadata, StratosActionType, ExtensionService } from '../../../core/extension/extension-service';
 import { LoggerService } from '../../../core/logger.service';
 
 @Component({
@@ -13,9 +13,9 @@ export class ExtensionButtonsComponent implements OnInit {
 
   @Input() type: StratosActionType;
 
-  constructor(private logger: LoggerService) { }
+  constructor(private logger: LoggerService, private extensionService: ExtensionService) { }
 
   ngOnInit() {
-    this.extensionActions = getActionsFromExtensions(this.type);
+    this.extensionActions = this.extensionService.getActionsFromExtensions(this.type);
   }
 }
