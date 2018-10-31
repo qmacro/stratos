@@ -7,7 +7,7 @@ Depending on the deployment mode, you may require access to an UAA.
 In Docker Compose a UAA instance is deployed.
 The default login credentials for the Console admin user are:
 
- - username: `admin`,
+ - username: `admin`
  - password: `hscadmin`
 
 The Console admin scope in this environment is `stratos.admin`. Any user with this scope will be identified as a user.
@@ -20,7 +20,7 @@ Therefore, the login credentials will be the CF credentials for the user. A Clou
 
 ## Kubernetes deployment
 
-In a Kubernetes deployment using Helm, no UAA instance is deployed. Therefore users need to provide their own UAA to against.
+In a Kubernetes deployment using Helm, no UAA instance is deployed. Therefore users need to provide their own UAA to authenticate against.
 
 The Console will start in a setup mode and users will be need to provide the following to complete the setup:
 1. UAA Endpoint
@@ -59,6 +59,6 @@ Admin Account: `admin`
 Password: `hscadmin`
 
 4. Click enter and select the following from the list:
-`stratos.admon`
+`stratos.admin`
 
 5. The Console is now ready to be used
